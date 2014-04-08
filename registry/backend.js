@@ -177,7 +177,11 @@ var knownKeys = {
     "Token": MAYBE_EMPTY_TOKEN,
     "Blog": /^(|http(|s)\:\/\/[A-Za-z0-9\.\-\_\%\?\=\/]+)$/,
     "Twitter": /^(|@[A-Za-z0-9_]{1,15})$/,
-    "Wikipedia": /^(|(U|u)tente\:.*)$/,
+    //
+    // XXX approximate regex: the part after the ":" is basically the
+    // regex that describes a URI path according to RFC 3986.
+    //
+    "Wikipedia": /^(|((U|u)tente|(U|u)ser):([A-Za-z0-9._~%!$&'()*+,;=:@\/\-]+))$/,
     "Video": /^(|http(|s)\:\/\/[A-Za-z0-9\.\-\_\%\?\=\/]+)$/,
     "Hash": PWDHASH
 };
