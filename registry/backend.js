@@ -181,7 +181,7 @@ var knownKeys = {
     // XXX approximate regex: the part after the ":" is basically the
     // regex that describes a URI path according to RFC 3986.
     //
-    "Wikipedia": /^(|((U|u)tente|(U|u)ser):([A-Za-z0-9._~%!$&'()*+,;=:@/-]+))$/,
+    "Wikipedia": /^(|((U|u)tente|(U|u)ser):([A-Za-z0-9._~%!$&'()*+,;=:@\/\-]+))$/,
     "Video": /^(|http(|s)\:\/\/[A-Za-z0-9\.\-\_\%\?\=\/]+)$/,
     "Hash": PWDHASH
 };
