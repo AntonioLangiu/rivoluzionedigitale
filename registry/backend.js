@@ -78,7 +78,6 @@ exports.getUsers = function (callback) {
             }
 
             console.info("backend: imported %d users", Object.keys(users).length);
-
             callback(null, users);
         });
 };
