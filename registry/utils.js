@@ -81,6 +81,7 @@ exports.safelyLogout = function (request) {
 };
 
 var safelyParseJSON = function (data) {
+    console.info("utils: safelyParseJSON");
     try {
         return JSON.parse(data);
     } catch (error) {
