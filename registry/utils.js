@@ -169,13 +169,15 @@ exports.servePath__ = function (filename, response) {
 };
 
 exports.readFileSync = function (pathname, encoding, callback) {
+    console.info("utils: readFileSync");
     try {
         var data = fs.readFileSync(pathname, encoding);
     } catch (error) {
-        console.warn("readFileSync: %s", error);
+        console.warn("readFileSync error: %s", error);
         callback(error);
         return;
     }
+    console.info("readFileSync success");
     callback(null, data);
 };
 
