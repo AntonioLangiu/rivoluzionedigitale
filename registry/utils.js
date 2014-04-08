@@ -68,6 +68,7 @@ exports.safelyLogin = function (request, response, realm, users) {
     try {
         return authlib.login(request, response, realm, users);
     } catch (error) {
+        // Note: because autlib.login() returns indeed false on error
         return false;
     }
 };
@@ -76,6 +77,7 @@ exports.safelyLogout = function (request) {
     try {
         return authlib.logout(request);
     } catch (error) {
+        // Note: because autlib.login() returns indeed false on error
         return false;
     }
 };
