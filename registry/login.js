@@ -62,10 +62,11 @@ function verifyLogin(request, response, callback) {
             return;
         }
 
-        //
-        // Note: here `user' should be a matricola. Do we need to
-        // explicitly assert() this fact?
-        //
+        // Just in case, should not really happen
+        if (!backend.validMatricola(user)) {
+            console.warn("login: invalid user");
+            return;
+        }
 
         console.info("login: logged in as: %s", user);
         callback(user);
