@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 
+//
+// Generates the pages you see when you're logged in
+//
+
 /*jslint node: true */
 "use strict";
 
