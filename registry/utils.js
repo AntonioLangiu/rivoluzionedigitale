@@ -64,6 +64,7 @@ var internalError = function (error, request, response) {
 };
 
 exports.safelyLogin = function (request, response, realm, users) {
+    console.info("utils: safelyLogin");
     try {
         return authlib.login(request, response, realm, users);
     } catch (error) {
