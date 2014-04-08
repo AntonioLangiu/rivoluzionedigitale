@@ -32,9 +32,9 @@
 /*jslint node: true */
 "use strict";
 
-var backend = require("./backend.js");
+var backend = require("./backend");
 var fs = require("fs");
-var utils = require("./utils.js");
+var utils = require("./utils");
 
 var generatePage = function (request, response, matricola) {
     console.info("priv: generatePage");
