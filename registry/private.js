@@ -77,9 +77,8 @@ var generatePage = function (request, response, matricola) {
 
 var modPage = function (request, response) {
     utils.readBodyJSON(request, response, function (stud) {
-        if (!backend.hasValidKeys(stud) ||
-            stud.Token !== undefined || !backend.validMatricola(stud.Matricola)
-        ) {
+        if (!backend.hasValidKeys(stud) || stud.Token !== undefined
+                || !backend.validMatricola(stud.Matricola)) {
             utils.internalError("private: invalid argument", request, response);
             return;
         }
