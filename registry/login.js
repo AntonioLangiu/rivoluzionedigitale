@@ -38,7 +38,7 @@ var http = require("http");
 var priv = require("./private");
 var utils = require("./utils");
 
-var realm = "RivoluzPaginaPersonale";
+var REALM = "RivoluzPaginaPersonale";
 
 function verifyLogin(request, response, callback) {
 
@@ -51,11 +51,11 @@ function verifyLogin(request, response, callback) {
             return;
         }
 
-        var user = utils.safelyLogin(request, response, realm, users);
+        var user = utils.safelyLogin(request, response, REALM, users);
         if (user === false) {
             console.warn("login: unauthorized");
             utils.writeHeadVerboseCORS(response, 401, {
-                'WWW-Authenticate': 'Digest realm="' + realm +
+                'WWW-Authenticate': 'Digest realm="' + REALM +
                     '",qop="auth"'
             });
             response.end();
