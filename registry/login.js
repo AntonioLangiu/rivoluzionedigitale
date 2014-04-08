@@ -53,7 +53,7 @@ function verifyLogin(request, response, callback) {
 
         var user = utils.safelyLogin(request, response, realm, users);
         if (user === false) {
-            console.info("login: unauthorized");
+            console.warn("login: unauthorized");
             utils.writeHeadVerboseCORS(response, 401, {
                 'WWW-Authenticate': 'Digest realm="' + realm +
                     '",qop="auth"'
