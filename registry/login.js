@@ -64,7 +64,7 @@ function verifyLogin(request, response, callback) {
 
         //
         // Note: here `user' should be a matricola. Do we need to
-        // explicitly assert this fact?
+        // explicitly assert() this fact?
         //
 
         console.info("login: logged in as: %s", user);
