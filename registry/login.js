@@ -32,11 +32,11 @@
 /*jslint node: true */
 'use strict';
 
-var backend = require("./backend.js");
+var backend = require("./backend");
 var fs = require("fs");
 var http = require("http");
-var priv = require("./private.js");
-var utils = require("./utils.js");
+var priv = require("./private");
+var utils = require("./utils");
 
 var realm = "Area studenti";
 
