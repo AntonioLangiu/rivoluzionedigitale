@@ -171,9 +171,10 @@ exports.servePath__ = function (filename, response) {
 };
 
 exports.readFileSync = function (pathname, encoding, callback) {
+    var data;
     console.info("utils: readFileSync");
     try {
-        var data = fs.readFileSync(pathname, encoding);
+        data = fs.readFileSync(pathname, encoding);
     } catch (error) {
         console.warn("utils: readFileSync error: %s", error);
         callback(error);
