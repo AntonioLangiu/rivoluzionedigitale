@@ -60,6 +60,7 @@ exports.getUsers = function (callback) {
 
     console.info("backend: getUsers");
 
+    // Note: sync so we don't need to deal with concurrent writes
     utils.readFileSync("studenti/.htpasswd", "utf8",
         function (error, data) {
             var users;
