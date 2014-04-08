@@ -54,27 +54,32 @@ function fixStringCase(str) {
 
 exports.getUsers = function (callback) {
 
+    console.info("backend: getUsers");
+
     utils.readFileSync("studenti/.htpasswd", "utf8",
         function (error, data) {
             var users;
 
+            console.info("backend: getUsers callback");
+
             if (error) {
-                console.error("backend: cannot read passwd file");
+                console.error("backend: can't read passwd file");
                 callback(error);
                 return;
             }
 
-            console.info("backend: opening passwd file");
+            console.info("backend: successfully read passwd file");
 
             users = utils.safelyParseJSON(data);
             if (users === null) {
-                console.error("backend: invalid passwd file");
+                console.error("backend: can't parse passwd file");
                 callback("backend error");
                 return;
             }
 
-            console.info("backend: imported %d users", Object.keys(users).length);
+            // TODO: validate users?
 
+            console.info("backend: imported %d users", Object.keys(users).length);
             callback(null, users);
         });
 };
@@ -107,26 +112,29 @@ exports.saveUsers = function (matricola, hash, callback) {
 };
 
 exports.readStudentInfo = function (matricola, callback) {
-    var stud;
 
-    console.info("backend: reading stud file");
-
+    console.info("backend: readStudentInfo");
     utils.readFileSync("./studenti/s" + matricola + ".json", "utf8",
         function (error, data) {
+            var stud;
+
+            console.info("backend: readStudentInfo callback");
+
             if (error) {
-                console.error("backend: cannot read student's file");
+                console.error("backend: readStudentInfo: read error");
                 callback(error);
                 return;
             }
 
             stud = utils.safelyParseJSON(data);
             if (stud === null) {
-                callback("read error");
+                callback("backend: readStudentInfo: invalid JSON");
                 return;
             }
 
-            console.info("backend: personal data whitout error");
+            // TODO: validate stud?
 
+            console.info("backend: readStudentInfo: success");
             callback(null, stud);
         });
 };

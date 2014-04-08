@@ -64,6 +64,7 @@ var internalError = function (error, request, response) {
 };
 
 exports.safelyLogin = function (request, response, realm, users) {
+    console.info("utils: safelyLogin");
     try {
         return authlib.login(request, response, realm, users);
     } catch (error) {
@@ -169,13 +170,15 @@ exports.servePath__ = function (filename, response) {
 };
 
 exports.readFileSync = function (pathname, encoding, callback) {
+    console.info("utils: readFileSync");
     try {
         var data = fs.readFileSync(pathname, encoding);
     } catch (error) {
-        console.warn("readFileSync: %s", error);
+        console.warn("utils: readFileSync error: %s", error);
         callback(error);
         return;
     }
+    console.info("utils: readFileSync success");
     callback(null, data);
 };
 
