@@ -60,17 +60,19 @@ exports.getUsers = function (callback) {
         function (error, data) {
             var users;
 
+            console.info("backend: getUsers callback");
+
             if (error) {
-                console.error("backend: cannot read passwd file");
+                console.error("backend: can't read passwd file");
                 callback(error);
                 return;
             }
 
-            console.info("backend: opening passwd file");
+            console.info("backend: successfully read passwd file");
 
             users = utils.safelyParseJSON(data);
             if (users === null) {
-                console.error("backend: invalid passwd file");
+                console.error("backend: can't parse passwd file");
                 callback("backend error");
                 return;
             }
