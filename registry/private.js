@@ -33,7 +33,9 @@ var fs = require("fs");
 var utils = require("./utils.js");
 
 var generatePage = function (request, response, matricola) {
+    console.info("priv: generatePage");
     backend.readStudentInfo(matricola, function (error, stud) {
+        console.info("priv: generatePage callback");
         if (error) {
             utils.internalError(error, request, response);
             return;
