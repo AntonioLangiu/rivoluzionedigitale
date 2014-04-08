@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 
+//
+// Code to manage the backend
+//
+
 /*jslint node: true */
 "use strict";
 
