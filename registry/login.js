@@ -38,7 +38,7 @@ var http = require("http");
 var priv = require("./private");
 var utils = require("./utils");
 
-var realm = "Area studenti";
+var realm = "RivoluzPaginaPersonale";
 
 function verifyLogin(request, response, callback) {
 
