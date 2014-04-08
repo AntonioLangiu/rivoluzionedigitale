@@ -42,7 +42,9 @@ var realm = "Area studenti";
 
 function verifyLogin(request, response, callback) {
 
+    console.info("login: verifyLogin");
     backend.getUsers(function (error, users) {
+        console.info("login: verifyLogin callback");
 
         if (error) {
             utils.internalError(error, request, response);
@@ -51,9 +53,8 @@ function verifyLogin(request, response, callback) {
 
         var user = utils.safelyLogin(request, response, realm, users);
         if (user === false) {
-            console.log("login: unauthorized");
-            response.writeHead(401, {
-                'Content-Type': 'text/html',
+            console.info("login: unauthorized");
+            utils.writeHeadVerboseCORS(response, 401, {
                 'WWW-Authenticate': 'Digest realm="' + realm +
                     '",qop="auth"'
             });
@@ -61,19 +62,23 @@ function verifyLogin(request, response, callback) {
             return;
         }
 
-        console.log("login: logged in as: %s", user);
+        console.info("login: logged in as: %s", user);
         callback(user);
     });
 }
 
 exports.handleRequest = function (request, response) {
+    console.info("login: handleRequest");
     verifyLogin(request, response, function (user) {
+        console.info("login: handleRequest callback");
         priv.generatePage(request, response, user);
     });
 };
 
 exports.modPage = function (request, response) {
+    console.info("login: modPage");
     verifyLogin(request, response, function () {
+        console.info("login: modPage callback");
         priv.modPage(request, response);
     });
 };
