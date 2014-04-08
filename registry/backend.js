@@ -73,7 +73,7 @@ exports.getUsers = function (callback) {
             users = utils.safelyParseJSON(data);
             if (users === null) {
                 console.warn("backend: can't parse passwd file");
-                callback("backend error");
+                callback("backend: safelyParseJSON failed");
                 return;
             }
 
