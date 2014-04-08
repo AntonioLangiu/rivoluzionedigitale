@@ -173,11 +173,11 @@ exports.readFileSync = function (pathname, encoding, callback) {
     try {
         var data = fs.readFileSync(pathname, encoding);
     } catch (error) {
-        console.warn("readFileSync error: %s", error);
+        console.warn("utils: readFileSync error: %s", error);
         callback(error);
         return;
     }
-    console.info("readFileSync success");
+    console.info("utils: readFileSync success");
     callback(null, data);
 };
 
