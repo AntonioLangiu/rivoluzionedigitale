@@ -54,6 +54,8 @@ function fixStringCase(str) {
 
 exports.getUsers = function (callback) {
 
+    console.info("backend: getUsers");
+
     utils.readFileSync("studenti/.htpasswd", "utf8",
         function (error, data) {
             var users;
