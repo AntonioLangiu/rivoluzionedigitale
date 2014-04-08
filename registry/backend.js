@@ -110,26 +110,27 @@ exports.saveUsers = function (matricola, hash, callback) {
 };
 
 exports.readStudentInfo = function (matricola, callback) {
-    var stud;
 
-    console.info("backend: reading stud file");
-
+    console.info("backend: readStudentInfo");
     utils.readFileSync("./studenti/s" + matricola + ".json", "utf8",
         function (error, data) {
+            var stud;
+
+            console.info("backend: readStudentInfo callback");
+
             if (error) {
-                console.error("backend: cannot read student's file");
+                console.error("backend: readStudentInfo: read error");
                 callback(error);
                 return;
             }
 
             stud = utils.safelyParseJSON(data);
             if (stud === null) {
-                callback("read error");
+                callback("backend: readStudentInfo: invalid JSON");
                 return;
             }
 
-            console.info("backend: personal data whitout error");
-
+            console.info("backend: readStudentInfo: success");
             callback(null, stud);
         });
 };
