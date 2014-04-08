@@ -41,25 +41,33 @@ var generatePage = function (request, response, matricola) {
             return;
         }
 
-        fs.readFile("./html/private.tpl.html", "utf8", function (error,
-            data) {
-            console.info("private: sending personal page");
-            data = data.replace(/@MATRICOLA@/g, matricola);
-            data = data.replace(/@NOME@/g, stud.Nome);
-            data = data.replace(/@COGNOME@/g, stud.Cognome);
+        fs.readFile("./html/private.tpl.html", "utf8",
+            function (error, data) {
+                console.info("priv: generatePage: readFile callback");
 
-            data = data.replace(/@BLOG@/g, stud.Blog);
-            data = data.replace(/@TWITTER@/g, stud.Twitter);
-            data = data.replace(/@WIKIPEDIA@/g, stud.Wikipedia);
-            data = data.replace(/@VIDEO@/g, stud.Video);
+                if (error) {
+                    utils.internalError(error, request, response);
+                    return;
+                }
 
-            utils.writeHeadVerboseCORS(response, 200, {
-                "Content-Type": "text/html"
+                console.info("priv: sending personal page");
+
+                // XXX: better to do this on the client side
+                data = data.replace(/@MATRICOLA@/g, matricola);
+                data = data.replace(/@NOME@/g, stud.Nome);
+                data = data.replace(/@COGNOME@/g, stud.Cognome);
+                data = data.replace(/@BLOG@/g, stud.Blog);
+                data = data.replace(/@TWITTER@/g, stud.Twitter);
+                data = data.replace(/@WIKIPEDIA@/g, stud.Wikipedia);
+                data = data.replace(/@VIDEO@/g, stud.Video);
+
+                utils.writeHeadVerboseCORS(response, 200, {
+                    "Content-Type": "text/html"
+                });
+
+                response.write(data);
+                response.end();
             });
-
-            response.write(data);
-            response.end();
-        });
     });
 };
 
