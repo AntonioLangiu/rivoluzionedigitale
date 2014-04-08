@@ -63,7 +63,7 @@ exports.getUsers = function (callback) {
             console.info("backend: getUsers callback");
 
             if (error) {
-                console.error("backend: can't read passwd file");
+                console.warn("backend: can't read passwd file");
                 callback(error);
                 return;
             }
@@ -72,7 +72,7 @@ exports.getUsers = function (callback) {
 
             users = utils.safelyParseJSON(data);
             if (users === null) {
-                console.error("backend: can't parse passwd file");
+                console.warn("backend: can't parse passwd file");
                 callback("backend error");
                 return;
             }
