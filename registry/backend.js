@@ -33,7 +33,7 @@
 "use strict";
 
 var fs = require("fs");
-var utils = require("./utils.js");
+var utils = require("./utils");
 
 var MATRICOLA = /^[0-9]{6}$/;
 var TOKEN = /^[A-Fa-f0-9]{40}$/;
