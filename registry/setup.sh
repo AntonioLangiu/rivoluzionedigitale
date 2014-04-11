@@ -88,6 +88,9 @@ echo "setup: create git repository into $DATADIR..."
 (
     cd $DATADIR
     git init
+    echo "{}" > .htpasswd
+    git add .htpasswd
+    git commit -am 'Initial commit'
 )
 
 echo "setup: give $DATADIR ownership to _rivoluz:_rivoluz..."
