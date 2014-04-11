@@ -29,8 +29,12 @@
 # Run the application
 #
 
-echo "" | tee -a studenti/log.txt
+DATADIR=/var/run/rivoluz
 
-echo "Startup: `date`" | tee -a studenti/log.txt
+echo ""
 
-nodejs index.js 2>&1 | tee -a studenti/log.txt
+echo "Startup: `date`"
+/usr/bin/env
+/usr/bin/id
+
+nodejs index.js
