@@ -116,6 +116,10 @@ function processStudentInfo (outfile, filesVector, index) {
                               0, function (error, body) {
             if (error) {
                 console.warn("studentInfo: %s", error);
+                //
+                // Write the error in the student post file, so that we
+                // can easily grep for [ERR] later.
+                //
                 writePost(studentInfo.Matricola, error, function () {
                     setTimeout(function () {
                         processStudentInfo(outfile, filesVector, index);
