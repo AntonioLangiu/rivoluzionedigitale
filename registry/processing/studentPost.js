@@ -136,60 +136,6 @@ function processStudentInfo (outfile, filesVector, index) {
     }
 }
 
-function downloadPost(matricola, url, redirections, callback) {
-
-    //
-    // We write download errors directly into the student's post file,
-    // which allows us to easily grep for errors later.
-    //
-
-    console.info("studentPost: GET %s", url);
-    var request = http.get(url);
-
-    request.on("error", function (error) {
-        writePost(matricola, "ERROR " + error, callback);
-    });
-
-    request.on("response", function (response) {
-        if (response.statusCode === 301 || response.statusCode === 302) {
-            var location = response.headers["Location"];
-            if (!location) {
-                console.warn("studentInfo: cannot follow redir");
-                writePost(matricola, "ERROR cannot follow redir", callback);
-                return;
-            }
-            if (redirections > 16) {
-                console.warn("studentInfo: too many redirections");
-                writePost(matricola, "ERROR too many redirections", callback);
-                return;
-            }
-            setTimeout(function () {
-                downloadPost(matricola, location, redirections + 1);
-            }, 1000.0);
-            return;
-        }
-
-        if (response.statusCode !== 200) {
-            console.warn("studentInfo: cannot download page");
-            writePost(matricola, "ERROR cannot download page", callback);
-            return;
-        }
-
-        response.setEncoding("utf-8");
-
-        var pageChunks = [];
-
-        response.on("data", function (chunk) {
-            pageChunks.push(chunk);
-        });
-
-        response.on("end", function () {
-            console.info("studentPost: writing s%s.html", matricola);
-            writePost(matricola, pageChunks.join(""), callback);
-        });
-    });
-}
-
 function writePost(matricola, data, callback) {
     fs.writeFile(path.join(OUTDIR, "s" + matricola + ".html"),
                  data, {mode: 0644}, function (error) {
