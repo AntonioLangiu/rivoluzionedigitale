@@ -29,91 +29,170 @@
 // List student post and create html page for each one
 //
 
+var download = require("./download");
 var fs = require("fs");
-var http = require("http");
 var path = require("path");
-var utils = require("./utils");
+var utils = require("../utils");
 
-var post = process.argv[2];
-
-if (process.argv[2] !== "Post1" && process.argv[2] !== "Post2" &&
-    process.argv[2] !== "Post3") {
-    console.log(process.argv[2] + " is a wrong parameter.");
-    console.log("Try one between: Post1, Post2, Post3.");
+if (process.argv.length != 3 || (process.argv[2] !== "Post1" &&
+    process.argv[2] !== "Post2" && process.argv[2] !== "Post3")) {
+    console.error("Usage: nodejs studentPost.js Post1|Post2|Post3");
     process.exit(1);
 }
 
-var SIMONE = "s178682.json";
 var ALESSIO = "s180975.json";
+var DATADIR = "/var/lib/rivoluz";
+var POST_FIELD = process.argv[2];
+var SIMONE = "s178682.json";
 
-var PATH_R = "/var/lib/rivoluz";
-var PATH_W = "/var/lib/rivoluz/" + post + "/";
+var OUTDIR = path.join("/var/lib/rivoluz/", POST_FIELD);
 
-var dati = "Matricola," + post + "\n";
-
-fs.readdir(PATH_R, function (error, files) {
-    if (error) return done(error);
-    for (var i in files) {
-
-        if (path.extname(files[i]) === ".json" && files[i] !==
-            SIMONE && files[i] !== ALESSIO) {
-
-            var data = fs.readFileSync(path.join(PATH_R, files[i]));
-            console.info("studentPost: reading %s", path.join(PATH_R, files[
-                i]));
-
-            obj = utils.safelyParseJSON(data);
-            
-            if (obj[post] != undefined && obj[post] !== "") {
-                dati += obj.Matricola + "," + obj[post] + "\n";
-
-                parsePost(obj, function (content, obj) {
-                    writeStudentHtml(content, obj);
-                });
-            }
-        }
+fs.stat(OUTDIR, function (error, stats) {
+    if (error && error.code !== "ENOENT") {
+        console.error("studentPost: %s", error);
+        process.exit(1);
     }
 
-    fs.writeFile(PATH_W + "_" + post + ".csv", dati, function (error) {
-        if (error) {
-            utils.internalError(error, request, response);
-            return;
-        } else {
-            console.info("studentPost: writing summuary file");
-        }
-    });
+    if (error) {
+        fs.mkdir(OUTDIR, 0755, function (error) {
+            if (error) {
+                console.error("studentPost: %s", error);
+                process.exit(1);
+            }
+            kickOff();
+        });
+        return;
+    }
+
+    if (!stats.isDirectory()) {
+        console.error("studentPost: not a directory");
+        process.exit(1);
+    }
+
+    kickOff();
 });
 
-var parsePost = function (obj, callback) {
-    var request = http.request(obj[post], function (response) {
-        console.info("studentPost: GET " + obj[post]);
-        var content = "";
+function kickOff() {
+    var outfile = fs.createWriteStream(path.join(OUTDIR, "/summary.csv"), {
+        flags: "w",
+        encoding: "utf-8",
+        mode: 0644
+    });
 
-        response.setEncoding("utf8");
+    outfile.on("error", function (error) {
+        console.error("studentPost: %s", error);
+        process.exit(1);
+    });
+
+    outfile.write("Matricola," + POST_FIELD + "\n", function () {
+        fs.readdir(DATADIR, function (error, files) {
+            if (error) {
+                console.error("studentPost: %s", error);
+                process.exit(1);
+            }
+            processStudentInfo(outfile, files, 0);
+        });
+    });
+}
+
+function processStudentInfo (outfile, filesVector, index) {
+    while (index < filesVector.length) {
+        var fileName = filesVector[index++];
+
+        if (path.extname(fileName) !== ".json")
+            continue;
+        if (fileName === SIMONE || fileName === ALESSIO)
+            continue;
+
+        console.info("studentPost: reading %s", fileName);
+
+        var data = fs.readFileSync(path.join(DATADIR, fileName));
+        var studentInfo = utils.safelyParseJSON(data);
+
+        if (!studentInfo || !studentInfo[POST_FIELD])
+            continue;
+
+        download.downloadPost(studentInfo.Matricola, studentInfo[POST_FIELD],
+                              0, function (error, body) {
+            if (error) {
+                console.warn("studentInfo: %s", error);
+                writePost(studentInfo.Matricola, error, function () {
+                    setTimeout(function () {
+                        processStudentInfo(outfile, filesVector, index);
+                    }, 0.0);
+                });
+                return;
+            }
+            writePost(studentInfo.Matricola, body, function () {
+                outfile.write(studentInfo.Matricola + "," + studentInfo[
+                              POST_FIELD] + "\n", function () {
+                    console.info("studentPost: deferred processStudentInfo");
+                    processStudentInfo(outfile, filesVector, index);
+                });
+            });
+        });
+
+        break;  /* Let the writable stream breathe */
+    }
+}
+
+function downloadPost(matricola, url, redirections, callback) {
+
+    //
+    // We write download errors directly into the student's post file,
+    // which allows us to easily grep for errors later.
+    //
+
+    console.info("studentPost: GET %s", url);
+    var request = http.get(url);
+
+    request.on("error", function (error) {
+        writePost(matricola, "ERROR " + error, callback);
+    });
+
+    request.on("response", function (response) {
+        if (response.statusCode === 301 || response.statusCode === 302) {
+            var location = response.headers["Location"];
+            if (!location) {
+                console.warn("studentInfo: cannot follow redir");
+                writePost(matricola, "ERROR cannot follow redir", callback);
+                return;
+            }
+            if (redirections > 16) {
+                console.warn("studentInfo: too many redirections");
+                writePost(matricola, "ERROR too many redirections", callback);
+                return;
+            }
+            setTimeout(function () {
+                downloadPost(matricola, location, redirections + 1);
+            }, 1000.0);
+            return;
+        }
+
+        if (response.statusCode !== 200) {
+            console.warn("studentInfo: cannot download page");
+            writePost(matricola, "ERROR cannot download page", callback);
+            return;
+        }
+
+        response.setEncoding("utf-8");
+
+        var pageChunks = [];
 
         response.on("data", function (chunk) {
-            content += chunk;
+            pageChunks.push(chunk);
         });
 
         response.on("end", function () {
-            callback(content, obj);
+            console.info("studentPost: writing s%s.html", matricola);
+            writePost(matricola, pageChunks.join(""), callback);
         });
-
-        request.on("error", function (err) {
-            console.log(err);
-        });
-
     });
-    request.end();
-};
+}
 
-var writeStudentHtml = function (content, obj) {
-    fs.writeFile(PATH_W + "s" + obj.Matricola + ".html", content,
-        function (error) {
-            if (error) {
-                utils.internalError(error, request, response);
-                return;
-            }
-            console.info("studentPost: writing s" + obj.Matricola + ".html");
-        });
-};
+function writePost(matricola, data, callback) {
+    fs.writeFile(path.join(OUTDIR, "s" + matricola + ".html"),
+                 data, {mode: 0644}, function (error) {
+        callback(error);
+    });
+}
