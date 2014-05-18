@@ -183,8 +183,7 @@ var server = http.createServer(function (request, response) {
         console.info("%s", serialized);
         console.info("annotator: END OUTPUT MESSAGE");
 
-        response.write(serialized);
-        response.end();
+        response.end(serialized);
         return;
     }
 
