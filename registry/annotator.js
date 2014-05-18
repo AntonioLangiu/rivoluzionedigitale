@@ -112,7 +112,7 @@ var server = http.createServer(function (request, response) {
             request.method === "DELETE") {
 
         utils.readBodyJSON(request, response, function (message) {
-            var state, ranges;
+            var state, ranges, globalState;
 
             console.info("annotator: BEGIN INCOMING MESSAGE");
             console.info("%s", JSON.stringify(message, undefined, 4));
@@ -136,11 +136,13 @@ var server = http.createServer(function (request, response) {
                 process.exit(1);
             }
 
+            globalState = JSON.stringify(ANNOTATIONS, undefined, 4);
+
             console.info("annotator: BEGIN STATE AFTER CHANGE");
-            console.info("%s", JSON.stringify(ANNOTATIONS, undefined, 4));
+            console.info("%s", globalState);
             console.info("annotator: END STATE AFTER CHANGE");
 
-            utils.writeFileSync(ANNOTATIONS_DB, ANNOTATIONS,
+            utils.writeFileSync(ANNOTATIONS_DB, globalState,
                 function (error) {
                     if (error) {
                         utils.internalError(error, request, response);
