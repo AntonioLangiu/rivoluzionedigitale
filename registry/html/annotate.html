@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>@URL_PATH@</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"> </script>
+
+    <script src="http://assets.annotateit.org/annotator/v1.2.9/annotator-full.min.js"> </script>
+    <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.2.9/annotator.min.css">
+
+    <script type="application/javascript">
+
+jQuery(document).ready(function () {
+    var urlPath = "@URL_PATH@";
+
+    jQuery.get(urlPath, function (data) {
+
+        /*-
+         * XXX I need to remove the <script> tags from the post page,
+         * to avoid -AFAICT- JavaScript-related conflicts.
+         *
+         * To this end, I use the following StackOverflow recipe:
+         *
+         *     http://stackoverflow.com/questions/6659351
+         */
+        data = data.replace(
+            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+
+        jQuery("#content").html(data);
+
+        var content = jQuery("#content").annotator();
+        content.annotator("addPlugin", "Store", {
+            "prefix": "/annotator",
+            annotationData: {
+                "uri": urlPath
+            },
+            loadFromSearch: {
+                "limit": 0,
+                "uri": urlPath
+            }
+	});
+
+    });
+});
+
+    </script>
+  </head>
+  <body>
+    <div id="content"></div>
+  </body>
+</html>
