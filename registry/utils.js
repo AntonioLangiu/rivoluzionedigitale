@@ -217,6 +217,7 @@ exports.writeFileSync = function (pathname, data, callback) {
 // Note: the following functions are used inside this module, so they
 // cannot be directly exported.
 //
+exports.writeHeadVerbose = writeHeadVerbose;
 exports.writeHeadVerboseCORS = writeHeadVerboseCORS;
 exports.internalError = internalError;
 exports.safelyParseJSON = safelyParseJSON;
