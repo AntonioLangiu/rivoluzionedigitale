@@ -187,9 +187,7 @@ var server = http.createServer(function (request, response) {
         return;
     }
 
-    // OPTIONS?
-    utils.writeHeadVerbose(response, 200, {});
-    response.end();
+    badRequest(response);
 });
 
 utils.readFileSync(ANNOTATIONS_DB, "utf8", function (error, data) {
