@@ -29,6 +29,7 @@
 // Proof of Concept annotator to provide better feedback
 //
 
+/*jslint node:true */
 "use strict";
 
 var backend = require("./backend");
@@ -44,7 +45,8 @@ var DIGIT = /^[0-9]$/;
 
 function servePost(request, response) {
 
-    var params = request.url.split("/");
+    var composedPath, urlPath,
+        params = request.url.split("/");
 
     if (params[0] !== "") {
         console.warn("annotator: invalid first param");
@@ -71,7 +73,7 @@ function servePost(request, response) {
     }
 
     if (params[1] === "read") {
-        var composedPath = "/../../rivoluz/Post" + params[3] + "/s"
+        composedPath = "/../../rivoluz/Post" + params[3] + "/s"
             + params[2] + ".html";
         utils.servePath__(composedPath, response, "text/html");
         return;
@@ -82,7 +84,7 @@ function servePost(request, response) {
             utils.internalError(error, request, response);
             return;
         }
-        var urlPath = "/read/" + params[2] + "/" + params[3];
+        urlPath = "/read/" + params[2] + "/" + params[3];
         data = data.replace(/@URL_PATH@/g, urlPath);
         utils.writeHeadVerboseCORS(response, 200, {
             "Content-Type": "text/html"
@@ -95,7 +97,7 @@ var server = http.createServer(function (request, response) {
     utils.logRequest(request);
 
     if (request.url.indexOf("/read/", 0) === 0 ||
-        request.url.indexOf("/annotate/", 0) === 0) {
+            request.url.indexOf("/annotate/", 0) === 0) {
         servePost(request, response);
         return;
     }
@@ -107,25 +109,28 @@ var server = http.createServer(function (request, response) {
 
     // Create - Update - Delete
     if (request.method === "POST" || request.method === "PUT" ||
-        request.method === "DELETE") {
+            request.method === "DELETE") {
 
         utils.readBodyJSON(request, response, function (message) {
+            var state, ranges;
 
             console.info("annotator: BEGIN INCOMING MESSAGE");
             console.info("%s", JSON.stringify(message, undefined, 4));
             console.info("annotator: END INCOMING MESSAGE");
 
-            var state = ANNOTATIONS[message.uri];
-            if (state === undefined)
+            state = ANNOTATIONS[message.uri];
+            if (state === undefined) {
                 ANNOTATIONS[message.uri] = state = {};
+            }
 
-            var ranges = JSON.stringify(message.ranges);
+            ranges = JSON.stringify(message.ranges);
             if (request.method === "POST" || request.method === "PUT") {
                 state[ranges] = message;
             } else if (request.method === "DELETE") {
                 delete state[ranges];
-                if (Object.keys(state).length <= 0)
+                if (Object.keys(state).length <= 0) {
                     delete ANNOTATIONS[message.uri];
+                }
             } else {
                 console.error("annotator: internal error");
                 process.exit(1);
@@ -145,7 +150,7 @@ var server = http.createServer(function (request, response) {
                         "Content-Type": "application/json"
                     });
                     response.end("{}");
-            });
+                });
 
         });
         return;
@@ -153,24 +158,26 @@ var server = http.createServer(function (request, response) {
 
     // Read
     if (request.method === "GET") {
+        var body, parsed_url, parsed_query, state, serialized;
+
         utils.writeHeadVerboseCORS(response, 200, {
             "Content-Type": "application/json"
         });
-        var body = {
+        body = {
             "rows": []
         };
 
-        var parsed_url = urllib.parse(request.url);
-        var parsed_query = querystring.parse(parsed_url.query);
-        var state = ANNOTATIONS[parsed_query.uri];
+        parsed_url = urllib.parse(request.url);
+        parsed_query = querystring.parse(parsed_url.query);
+        state = ANNOTATIONS[parsed_query.uri];
 
         if (state !== undefined) {
             Object.keys(state).forEach(function (key) {
-                body["rows"].push(state[key]);
+                body.rows.push(state[key]);
             });
         }
 
-        var serialized = JSON.stringify(body, undefined, 4);
+        serialized = JSON.stringify(body, undefined, 4);
 
         console.info("annotator: BEGIN OUTPUT MESSAGE");
         console.info("%s", serialized);
