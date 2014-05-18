@@ -86,7 +86,7 @@ function servePost(request, response) {
         }
         urlPath = "/read/" + params[2] + "/" + params[3];
         data = data.replace(/@URL_PATH@/g, urlPath);
-        utils.writeHeadVerboseCORS(response, 200, {
+        utils.writeHeadVerbose(response, 200, {
             "Content-Type": "text/html"
         });
         response.end(data);
@@ -146,7 +146,7 @@ var server = http.createServer(function (request, response) {
                         utils.internalError(error, request, response);
                         return;
                     }
-                    utils.writeHeadVerboseCORS(response, 200, {
+                    utils.writeHeadVerbose(response, 200, {
                         "Content-Type": "application/json"
                     });
                     response.end("{}");
@@ -160,7 +160,7 @@ var server = http.createServer(function (request, response) {
     if (request.method === "GET") {
         var body, parsed_url, parsed_query, state, serialized;
 
-        utils.writeHeadVerboseCORS(response, 200, {
+        utils.writeHeadVerbose(response, 200, {
             "Content-Type": "application/json"
         });
         body = {
@@ -188,7 +188,7 @@ var server = http.createServer(function (request, response) {
     }
 
     // OPTIONS?
-    utils.writeHeadVerboseCORS(response, 200, {});
+    utils.writeHeadVerbose(response, 200, {});
     response.end();
 });
 
