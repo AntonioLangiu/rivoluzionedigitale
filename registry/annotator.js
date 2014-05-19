@@ -34,6 +34,7 @@
 
 var backend = require("./backend");
 var http = require("http");
+var https = require("https");
 var fs = require("fs");
 var querystring = require("querystring");
 var urllib = require("url");
@@ -93,8 +94,18 @@ function servePost(request, response) {
     });
 }
 
-var server = http.createServer(function (request, response) {
+function serveRequest(request, response) {
     utils.logRequest(request);
+
+    if (request.url === "/annotator-full.min.js") {
+        utils.servePath__("/js/annotator-full.min.js", response,
+                          "application/javascript");
+        return;
+    }
+    if (request.url === "/annotator.min.css") {
+        utils.servePath__("/css/annotator.min.css", response, "text/css");
+        return;
+    }
 
     if (request.url.indexOf("/read/", 0) === 0 ||
             request.url.indexOf("/annotate/", 0) === 0) {
@@ -110,6 +121,11 @@ var server = http.createServer(function (request, response) {
     // Create - Update - Delete
     if (request.method === "POST" || request.method === "PUT" ||
             request.method === "DELETE") {
+
+        if (request.client === undefined || !request.client.authorized) {
+            utils.badRequest(response);
+            return;
+        }
 
         utils.readBodyJSON(request, response, function (message) {
             var state, ranges, globalState;
@@ -190,7 +206,19 @@ var server = http.createServer(function (request, response) {
     }
 
     utils.badRequest(response);
-});
+}
+
+var secureOptions = {
+    key: fs.readFileSync('ssl/server.key'),
+    cert: fs.readFileSync('ssl/server.crt'),
+    ca: fs.readFileSync('ssl/RootCA.crt'),
+    requestCert: true,
+    rejectUnauthorized: false
+};
+
+var server = http.createServer(serveRequest);
+var secureServer = https.createServer(secureOptions,
+    serveRequest);
 
 utils.readFileSync(ANNOTATIONS_DB, "utf8", function (error, data) {
     console.info("annotator: read config...");
@@ -204,5 +232,6 @@ utils.readFileSync(ANNOTATIONS_DB, "utf8", function (error, data) {
         process.exit(1);
     }
     console.info("annotator: read config... ok");
-    server.listen(8000);
+    server.listen(8080);
+    secureServer.listen(4443);
 });
