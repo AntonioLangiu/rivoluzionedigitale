@@ -16,15 +16,30 @@ jQuery(document).ready(function () {
     jQuery.get(urlPath, function (data) {
 
         /*-
-         * XXX I need to remove the <script> tags from the post page,
-         * to avoid -AFAICT- JavaScript-related conflicts.
+         * XXX Remove many tags (head, script, iframe, noscript) to make
+         * sure that we only load the bare minimum of the post.
          *
-         * To this end, I use the following StackOverflow recipe:
+         * We cannot load JavaScript because it may conflict with the jQuery
+         * that we use; we cannot load the CSSs because they may be over http,
+         * and so they won't load anyway.
+         *
+         * To this end, use the following StackOverflow recipe:
          *
          *     http://stackoverflow.com/questions/6659351
          */
+
+        data = data.replace(
+            /<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi,
+            "<head><title>@URL_PATH@</title></head>");
+
         data = data.replace(
             /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+
+        data = data.replace(
+            /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
+
+        data = data.replace(
+            /<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi, "");
 
         // XXX Make sure we only load stuff from https
         data = data.replace(/http:/g, "https:");
