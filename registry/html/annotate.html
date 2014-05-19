@@ -36,9 +36,6 @@ jQuery(document).ready(function () {
             /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
 
         data = data.replace(
-            /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
-
-        data = data.replace(
             /<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi, "");
 
         // XXX Make sure we only load stuff from https
