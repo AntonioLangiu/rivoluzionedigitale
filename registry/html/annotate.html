@@ -50,6 +50,7 @@ jQuery(document).ready(function () {
             var externalSpan = document.createElement("span");
             var imgAsLink = document.createElement("a");
             imgAsLink.href = this.src;
+            imgAsLink.setAttribute("class", "wasImage");
             imgAsLink.text = "[ImgSrc]";
             externalSpan.appendChild(imgAsLink);
             var newLink = document.createElement("a");
@@ -69,14 +70,15 @@ jQuery(document).ready(function () {
         jQuery("a.wasImage").hover(function (event) {
             jQuery("body").append("<div id='preview'><img src='"
                 + this.href + "' /></div>");
-            jQuery("#preview").css("top", "25px")
-                .css("left", "25px").fadeIn("fast");
+            jQuery("#preview")
+                .css("top", "0px")
+                .css("left", "0px")
+                .fadeIn("fast");
+            jQuery("#preview").click(function () {
+                this.remove();
+            });
         }, function() {
-            jQuery("#preview").remove();
-        });
-        jQuery("a.preview").mousemove(function (event) {
-            jQuery("#preview").css("top", "25px")
-                .css("left", "25px").fadeIn("fast");
+            // nothing to do
         });
 
         // Only keep YouTube and make sure we use https
@@ -112,11 +114,11 @@ jQuery(document).ready(function () {
 
 #preview {
     position: fixed;
-    border: 1px solid #ccc;
-    background: #333;
+    background: rgba(0, 0, 0, 0.5);
     padding: 5px;
     display: none;
     color: #fff;
+    z-axis: 999;
 }
 
     </style>
