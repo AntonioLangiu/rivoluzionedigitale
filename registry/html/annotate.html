@@ -61,8 +61,22 @@ jQuery(document).ready(function () {
 
         // Replace image with link pointing to its source
         jQuery('img').each(function () {
-            var link = "<a href='" + this.src + "'>[ImgSrc]</a>";
+            var link = "<a href='" + this.src
+                + "' class='wasImage'>[ImgSrc]</a>";
             $(this).replaceWith(link);
+        });
+
+        jQuery("a.wasImage").hover(function (event) {
+            jQuery("body").append("<div id='preview'><img src='"
+                + this.href + "' /></div>");
+            jQuery("#preview").css("top", (event.pageY) + "px")
+                .css("left", (event.pageX) + "px").fadeIn("fast");
+        }, function() {
+            jQuery("#preview").remove();
+        });
+        jQuery("a.preview").mousemove(function (event) {
+            jQuery("#preview").css("top", (event.pageY) + "px")
+                .css("left", (event.pageX) + "px");
         });
 
         // Only keep YouTube and make sure we use https
@@ -89,12 +103,23 @@ jQuery(document).ready(function () {
                 "limit": 0,
                 "uri": urlPath
             }
-	});
+        });
 
     });
 });
 
-    </script>
+    </script><style>
+
+#preview {
+    position: absolute;
+    border: 1px solid #ccc;
+    background: #333;
+    padding: 5px;
+    display: none;
+    color: #fff;
+}
+
+    </style>
   </head>
   <body>
     <p>
