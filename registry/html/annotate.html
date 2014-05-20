@@ -38,9 +38,6 @@ jQuery(document).ready(function () {
         data = data.replace(
             /<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi, "");
 
-        // XXX Make sure we only load stuff from https
-        data = data.replace(/http:/g, "https:");
-
         jQuery("#content").html(data);
 
         var content = jQuery("#content").annotator();
