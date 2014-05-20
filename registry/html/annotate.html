@@ -40,6 +40,31 @@ jQuery(document).ready(function () {
 
         jQuery("#content").html(data);
 
+        //
+        // Deal with images surrounded by a link first, because they
+        // require a more complicated processing.
+        //
+        jQuery("a img").each(function () {
+            var origLink = this.parentNode;
+            var container = origLink.parentNode;
+            var externalSpan = document.createElement("span");
+            var imgAsLink = document.createElement("a");
+            imgAsLink.href = this.src;
+            imgAsLink.text = "[ImgSrc]";
+            externalSpan.appendChild(imgAsLink);
+            var newLink = document.createElement("a");
+            newLink.href = origLink.href;
+            newLink.text = "[ImgOnClick]";
+            externalSpan.appendChild(newLink);
+            container.replaceChild(externalSpan, origLink);
+        });
+
+        // Replace image with link pointing to its source
+        jQuery('img').each(function () {
+            var link = "<a href='" + this.src + "'>[ImgSrc]</a>";
+            $(this).replaceWith(link);
+        });
+
         var content = jQuery("#content").annotator();
         content.annotator("addPlugin", "Store", {
             "prefix": "/annotator",
