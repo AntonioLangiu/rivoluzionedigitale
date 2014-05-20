@@ -68,11 +68,21 @@ jQuery(document).ready(function () {
         });
 
         jQuery("a.wasImage").hover(function (event) {
-            jQuery("body").append("<div id='preview'><img src='"
-                + this.href + "' /></div>");
+            jQuery("body").append(
+                "<div id='preview'>\n" +
+                "  <center>\n" +
+                "   <p style='font-size: 133%;'>" + this.href + "</p>\n" +
+                "   <img src='" + this.href + "' id='my-img'/>\n" +
+                "  </center>\n" +
+                "</div>");
+            jQuery("#my-img")
+                .css("max-width", "90%")
+                .css("max-height", "90%");
             jQuery("#preview")
                 .css("top", "0px")
                 .css("left", "0px")
+                .css("height", jQuery(window).height())
+                .css("width", jQuery(window).width())
                 .fadeIn("fast");
             jQuery("#preview").click(function () {
                 this.remove();
@@ -114,7 +124,7 @@ jQuery(document).ready(function () {
 
 #preview {
     position: fixed;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
     padding: 5px;
     display: none;
     color: #fff;
