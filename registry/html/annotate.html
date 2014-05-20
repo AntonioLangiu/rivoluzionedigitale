@@ -69,14 +69,14 @@ jQuery(document).ready(function () {
         jQuery("a.wasImage").hover(function (event) {
             jQuery("body").append("<div id='preview'><img src='"
                 + this.href + "' /></div>");
-            jQuery("#preview").css("top", (event.pageY) + "px")
-                .css("left", (event.pageX) + "px").fadeIn("fast");
+            jQuery("#preview").css("top", "25px")
+                .css("left", "25px").fadeIn("fast");
         }, function() {
             jQuery("#preview").remove();
         });
         jQuery("a.preview").mousemove(function (event) {
-            jQuery("#preview").css("top", (event.pageY) + "px")
-                .css("left", (event.pageX) + "px");
+            jQuery("#preview").css("top", "25px")
+                .css("left", "25px").fadeIn("fast");
         });
 
         // Only keep YouTube and make sure we use https
@@ -111,7 +111,7 @@ jQuery(document).ready(function () {
     </script><style>
 
 #preview {
-    position: absolute;
+    position: fixed;
     border: 1px solid #ccc;
     background: #333;
     padding: 5px;
