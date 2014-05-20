@@ -65,6 +65,20 @@ jQuery(document).ready(function () {
             $(this).replaceWith(link);
         });
 
+        // Only keep YouTube and make sure we use https
+        jQuery("iframe").each(function () {
+            if (this.src.indexOf("https://www.youtube.com", 0) !== 0 &&
+                    this.src.indexOf("http://www.youtube.com", 0) !== 0) {
+                this.remove();
+                return;
+            }
+            if (this.src.indexOf("http://", 0) === 0) {
+                this.src = this.src.replace(/http:/g, "https:");
+            }
+            var link = "<a href='" + this.src + "'>[YouTubeEmbed]</a>";
+            $(this).replaceWith(link);
+        });
+
         var content = jQuery("#content").annotator();
         content.annotator("addPlugin", "Store", {
             "prefix": "/annotator",
