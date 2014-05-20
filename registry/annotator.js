@@ -46,7 +46,7 @@ var DIGIT = /^[0-9]$/;
 
 function servePost(request, response) {
 
-    var composedPath, urlPath,
+    var composedPath, urlPath, contentType,
         params = request.url.split("/");
 
     if (params[0] !== "") {
@@ -55,7 +55,8 @@ function servePost(request, response) {
         return;
     }
 
-    if (params[1] !== "read" && params[1] !== "annotate") {
+    if (params[1] !== "read" && params[1] !== "annotate" &&
+            params[1] !== "view-source") {
         console.warn("annotator: invalid action");
         utils.badRequest(response);
         return;
@@ -73,10 +74,15 @@ function servePost(request, response) {
         return;
     }
 
-    if (params[1] === "read") {
+    if (params[1] === "read" || params[1] === "view-source") {
         composedPath = "/../../rivoluz/Post" + params[3] + "/s"
             + params[2] + ".html";
-        utils.servePath__(composedPath, response, "text/html");
+        if (params[1] !== "view-source") {
+            utils.servePath__(composedPath, response, "text/html");
+        } else {
+            utils.servePath__(composedPath, response,
+              "text/plain; charset=utf-8");
+        }
         return;
     }
 
@@ -85,7 +91,7 @@ function servePost(request, response) {
             utils.internalError(error, request, response);
             return;
         }
-        urlPath = "/read/" + params[2] + "/" + params[3];
+        urlPath = params[2] + "/" + params[3];
         data = data.replace(/@URL_PATH@/g, urlPath);
         utils.writeHeadVerbose(response, 200, {
             "Content-Type": "text/html"
@@ -108,7 +114,8 @@ function serveRequest(request, response) {
     }
 
     if (request.url.indexOf("/read/", 0) === 0 ||
-            request.url.indexOf("/annotate/", 0) === 0) {
+            request.url.indexOf("/annotate/", 0) === 0 ||
+            request.url.indexOf("/view-source/", 0) === 0) {
         servePost(request, response);
         return;
     }

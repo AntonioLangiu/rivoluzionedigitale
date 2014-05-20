@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>@URL_PATH@</title>
+    <title>Annotate: /read/@URL_PATH@</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"> </script>
     <script src="/annotator-full.min.js"> </script>
@@ -11,7 +11,7 @@
     <script type="application/javascript">
 
 jQuery(document).ready(function () {
-    var urlPath = "@URL_PATH@";
+    var urlPath = "/read/@URL_PATH@";
 
     jQuery.get(urlPath, function (data) {
 
@@ -30,7 +30,7 @@ jQuery(document).ready(function () {
 
         data = data.replace(
             /<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi,
-            "<head><title>@URL_PATH@</title></head>");
+            "<head><title>/read/@URL_PATH@</title></head>");
 
         data = data.replace(
             /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
@@ -61,6 +61,13 @@ jQuery(document).ready(function () {
     </script>
   </head>
   <body>
+    <p>
+      <span><a href="http://127.0.0.1:8080/read/@URL_PATH@"
+        target="_blank">[originale]</a></span>
+      <span><a href="http://127.0.0.1:8080/view-source/@URL_PATH@"
+        target="_blank">[sorgente]</a></span>
+    </p>
+    <hr />
     <div id="content"></div>
   </body>
 </html>
