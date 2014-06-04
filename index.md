@@ -1,4 +1,3 @@
-Test modifica
 # Indice lezioni di Rivoluzione Digitale (beta)
 
 By Simone Basso, Davide Palermo, Sebastiano Franchina, Antonio
